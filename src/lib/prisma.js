@@ -4,7 +4,12 @@ const globalForPrisma = globalThis;
 
 if (!globalForPrisma.prisma) {
   globalForPrisma.prisma = new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error"] : ["error"],
+    log: ["error"],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
   });
 }
 
