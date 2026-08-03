@@ -1,17 +1,16 @@
 import { PrismaClient } from "@/generated/prisma-client";
 
-const globalForPrisma = global;
+const globalForPrisma = globalThis;
 
-export function getPrisma() {
-  if (
-    !globalForPrisma.prisma ||
-    !globalForPrisma.prisma.seoAudit ||
-    !globalForPrisma.prisma.keyword
-  ) {
-    globalForPrisma.prisma = new PrismaClient();
-  }
-
-  return globalForPrisma.prisma;
+if (!globalForPrisma.prisma) {
+  globalForPrisma.prisma = new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["error"] : ["error"],
+  });
 }
 
-export const prisma = getPrisma();
+export const prisma = globalForPrisma.prisma;
+
+// Legacy helper for backward compatibility
+export function getPrisma() {
+  return prisma;
+}

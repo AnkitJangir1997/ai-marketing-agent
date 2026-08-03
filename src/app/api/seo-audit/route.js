@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 // Import fresh Prisma instance
 import { getPrisma } from "@/lib/prisma";
-import { crawlAndAuditWebsite } from "../../../../crawler/crawler";
+import { crawlAndAuditWebsite } from "@/lib/crawler";
 
 export async function GET(request) {
   try {
