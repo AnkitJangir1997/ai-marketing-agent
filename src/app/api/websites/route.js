@@ -1,52 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-const defaultWebsites = [
-  {
-    name: "AJStudio",
-    domain: "ajstudio.in",
-    seoScore: 91,
-    status: "Healthy",
-    country: "India",
-    industry: "Design",
-    language: "English",
-  },
-  {
-    name: "TaxTickles",
-    domain: "taxtickles.com",
-    seoScore: 84,
-    status: "Warning",
-    country: "India",
-    industry: "Finance",
-    language: "English",
-  },
-  {
-    name: "Steam Sauna UAE",
-    domain: "steamsaunauae.com",
-    seoScore: 95,
-    status: "Healthy",
-    country: "UAE",
-    industry: "E-commerce",
-    language: "English",
-  },
-];
-
 export async function GET() {
   try {
-    let websites = await prisma.website.findMany({
+    const websites = await prisma.website.findMany({
       orderBy: { createdAt: "desc" },
     });
-
-    if (websites.length === 0) {
-      // Seed database with default websites if empty
-      await prisma.website.createMany({
-        data: defaultWebsites,
-      });
-      websites = await prisma.website.findMany({
-        orderBy: { createdAt: "desc" },
-      });
-    }
-
     return NextResponse.json(websites);
   } catch (error) {
     return NextResponse.json(
@@ -85,10 +44,6 @@ export async function POST(request) {
       );
     }
 
-    // Generate random seoScore (50 to 99) and status
-    const seoScore = Math.floor(Math.random() * 50) + 50;
-    const status = seoScore >= 80 ? "Healthy" : "Warning";
-
     const website = await prisma.website.create({
       data: {
         name: name.trim(),
@@ -96,8 +51,8 @@ export async function POST(request) {
         country: country?.trim() || null,
         industry: industry?.trim() || null,
         language: "English",
-        seoScore,
-        status,
+        seoScore: 0,
+        status: "Pending",
       },
     });
 
@@ -107,5 +62,21 @@ export async function POST(request) {
       { error: error.message || "Failed to create website" },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = parseInt(searchParams.get("id"), 10);
+
+    if (!id) {
+      return NextResponse.json({ error: "Website ID is required" }, { status: 400 });
+    }
+
+    await prisma.website.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
