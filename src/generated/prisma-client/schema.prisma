@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Website {
+  id        Int      @id @default(autoincrement())
+  name      String
+  domain    String   @unique
+  country   String?
+  industry  String?
+  language  String?
+  status    String   @default("Pending")
+  seoScore  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  audits      SeoAudit[]
+  keywords    Keyword[]
+  blogs       BlogPost[]
+  competitors Competitor[]
+  reports     AnalyticsReport[]
+}
+
+model SeoAudit {
+  id            Int      @id @default(autoincrement())
+  websiteId     Int
+  website       Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  healthScore   Int      @default(0)
+  criticalCount Int      @default(0)
+  warningCount  Int      @default(0)
+  noticeCount   Int      @default(0)
+  pagesCrawled  Int      @default(0)
+  issues        Json // List of detected issues
+  createdAt     DateTime @default(now())
+}
+
+model Keyword {
+  id         Int      @id @default(autoincrement())
+  websiteId  Int
+  website    Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  term       String
+  volume     Int      @default(0)
+  difficulty Int      @default(0)
+  cpc        String   @default("$0.00")
+  intent     String   @default("Informational")
+  cluster    String?
+  status     String   @default("Discovered")
+  createdAt  DateTime @default(now())
+}
+
+model Competitor {
+  id             Int      @id @default(autoincrement())
+  websiteId      Int
+  website        Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  name           String
+  domain         String
+  traffic        String   @default("0")
+  dr             Int      @default(0)
+  keywordsCount  Int      @default(0)
+  backlinksCount Int      @default(0)
+  createdAt      DateTime @default(now())
+}
+
+model BlogPost {
+  id              Int       @id @default(autoincrement())
+  websiteId       Int
+  website         Website   @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  title           String
+  slug            String
+  targetKeyword   String
+  wordCount       Int       @default(0)
+  content         String
+  metaTitle       String?
+  metaDescription String?
+  schemaJson      String?
+  status          String    @default("Draft")
+  wpPostId        Int?
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AnalyticsReport {
+  id          Int      @id @default(autoincrement())
+  websiteId   Int
+  website     Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  totalClicks Int      @default(0)
+  impressions Int      @default(0)
+  ctr         Float    @default(0.0)
+  avgPosition Float    @default(0.0)
+  createdAt   DateTime @default(now())
+}
