@@ -33,7 +33,7 @@ export async function POST(request) {
     cleanedDomain = cleanedDomain.split("/")[0];
 
     // Check if domain already exists
-    const existing = await prisma.website.findUnique({
+    const existing = await prisma.website.findFirst({
       where: { domain: cleanedDomain },
     });
 
