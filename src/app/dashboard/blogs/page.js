@@ -85,12 +85,20 @@ export default function BlogsPage() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && blogs.length === 0 && (
+          <div className="py-12 text-center text-slate-400">
+            <Send className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+            <p className="font-semibold text-slate-700">No blog articles generated yet.</p>
+            <p className="text-xs text-slate-400 mt-1">Click &quot;Create New AI Blog&quot; above to generate your first 2500+ word post.</p>
+          </div>
+        )}
+
+        {!loading && !error && blogs.length > 0 && (
           <div className="overflow-x-auto mt-4">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-100 text-xs uppercase text-slate-400 font-semibold">
-                  <th className="pb-3">Article Title & Slug</th>
+                  <th className="pb-3">Article Title &amp; Slug</th>
                   <th className="pb-3">Target Keyword</th>
                   <th className="pb-3">Word Count</th>
                   <th className="pb-3">Status</th>

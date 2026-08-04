@@ -119,7 +119,15 @@ export default function KeywordResearchPage() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && filteredKeywords.length === 0 && (
+          <div className="py-12 text-center text-slate-400">
+            <Search className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+            <p className="font-semibold text-slate-700">No keywords tracked yet.</p>
+            <p className="text-xs text-slate-400 mt-1">Enter a seed topic above and click &quot;Research Keywords&quot; to begin.</p>
+          </div>
+        )}
+
+        {!loading && !error && filteredKeywords.length > 0 && (
           <div className="overflow-x-auto mt-4">
             <table className="w-full text-left">
               <thead>

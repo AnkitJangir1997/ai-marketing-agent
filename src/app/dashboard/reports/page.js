@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import useKeywords from "@/features/keyword/hooks/useKeywords";
 import { Toaster, toast } from "sonner";
 import {
   ResponsiveContainer,
@@ -22,53 +23,15 @@ import {
   Percent,
   Award,
   ArrowUpRight,
-  ArrowDownRight,
   RefreshCw,
+  Search,
 } from "lucide-react";
-
-const rankings = [
-  {
-    id: 1,
-    keyword: "Best Web Development Company Jaipur",
-    position: 2,
-    change: "+3",
-    isPositive: true,
-    volume: "3.6K",
-    url: "/services/web-development",
-  },
-  {
-    id: 2,
-    keyword: "Affordable E-Commerce Website Developer",
-    position: 5,
-    change: "+5",
-    isPositive: true,
-    volume: "2.4K",
-    url: "/services/e-commerce",
-  },
-  {
-    id: 3,
-    keyword: "Local SEO Audit Checklist for Business",
-    position: 8,
-    change: "-1",
-    isPositive: false,
-    volume: "2.1K",
-    url: "/blog/seo-checklist",
-  },
-  {
-    id: 4,
-    keyword: "Best Website Developer in Jaipur Under 20000",
-    position: 1,
-    change: "+4",
-    isPositive: true,
-    volume: "1.4K",
-    url: "/pricing",
-  },
-];
 
 export default function ReportsPage() {
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
+  const { keywords } = useKeywords();
 
   useEffect(() => {
     async function fetchReports() {
@@ -89,30 +52,22 @@ export default function ReportsPage() {
 
   const handleExportPdf = () => {
     setIsExporting(true);
-    toast.info("Reporting Agent generating executive PDF report from Supabase analytics...");
+    toast.info("Generating PDF report from database analytics...");
 
     setTimeout(() => {
       setIsExporting(false);
-      toast.success("Executive SEO & Traffic PDF Report downloaded!");
+      toast.success("Executive SEO & Traffic PDF Report generated!");
     }, 2200);
   };
 
   const report = reportData?.report || {
-    totalClicks: 14200,
-    impressions: 142800,
-    ctr: 9.9,
-    avgPosition: 4.2,
+    totalClicks: 0,
+    impressions: 0,
+    ctr: 0,
+    avgPosition: 0,
   };
 
-  const trafficData = reportData?.trafficData || [
-    { day: "Day 1", clicks: 320, impressions: 3400 },
-    { day: "Day 5", clicks: 410, impressions: 4200 },
-    { day: "Day 10", clicks: 520, impressions: 5100 },
-    { day: "Day 15", clicks: 680, impressions: 6400 },
-    { day: "Day 20", clicks: 840, impressions: 7900 },
-    { day: "Day 25", clicks: 1100, impressions: 9800 },
-    { day: "Day 30", clicks: 1420, impressions: 12400 },
-  ];
+  const trafficData = reportData?.trafficData || [];
 
   return (
     <DashboardLayout>
@@ -122,7 +77,7 @@ export default function ReportsPage() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Analytics & Performance Reports</h1>
           <p className="mt-1.5 text-slate-500 text-sm">
-            Search console clicks, impression trends, and automated ranking reports from Supabase
+            Search console clicks, impression trends, and automated ranking reports from database
           </p>
         </div>
 
@@ -148,11 +103,8 @@ export default function ReportsPage() {
               <div>
                 <p className="text-xs text-slate-400 font-medium uppercase">Total Clicks</p>
                 <h3 className="text-xl font-bold text-slate-800">
-                  {report.totalClicks?.toLocaleString()}
+                  {report.totalClicks?.toLocaleString() || 0}
                 </h3>
-                <span className="text-xs font-semibold text-emerald-600 inline-flex items-center mt-0.5">
-                  <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" /> +18.4%
-                </span>
               </div>
             </Card>
 
@@ -163,11 +115,8 @@ export default function ReportsPage() {
               <div>
                 <p className="text-xs text-slate-400 font-medium uppercase">Total Impressions</p>
                 <h3 className="text-xl font-bold text-slate-800">
-                  {report.impressions?.toLocaleString()}
+                  {report.impressions?.toLocaleString() || 0}
                 </h3>
-                <span className="text-xs font-semibold text-emerald-600 inline-flex items-center mt-0.5">
-                  <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" /> +24.1%
-                </span>
               </div>
             </Card>
 
@@ -177,10 +126,7 @@ export default function ReportsPage() {
               </div>
               <div>
                 <p className="text-xs text-slate-400 font-medium uppercase">Avg CTR</p>
-                <h3 className="text-xl font-bold text-slate-800">{report.ctr}%</h3>
-                <span className="text-xs font-semibold text-emerald-600 inline-flex items-center mt-0.5">
-                  <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" /> +1.2%
-                </span>
+                <h3 className="text-xl font-bold text-slate-800">{report.ctr || 0}%</h3>
               </div>
             </Card>
 
@@ -190,10 +136,9 @@ export default function ReportsPage() {
               </div>
               <div>
                 <p className="text-xs text-slate-400 font-medium uppercase">Avg Position</p>
-                <h3 className="text-xl font-bold text-slate-800">#{report.avgPosition}</h3>
-                <span className="text-xs font-semibold text-emerald-600 inline-flex items-center mt-0.5">
-                  <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" /> +2.5 spots
-                </span>
+                <h3 className="text-xl font-bold text-slate-800">
+                  {report.avgPosition ? `#${report.avgPosition}` : "—"}
+                </h3>
               </div>
             </Card>
           </div>
@@ -201,28 +146,34 @@ export default function ReportsPage() {
           {/* Traffic Trend Line Chart */}
           <Card className="mb-8 p-6">
             <h2 className="text-xl font-bold text-slate-800 mb-1">Clicks & Impressions Trend</h2>
-            <p className="text-xs text-slate-400 mb-6">Organic growth tracking over the last 30 days</p>
-            <div className="h-80 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trafficData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#0f172a",
-                      borderRadius: "12px",
-                      border: "none",
-                      color: "#fff",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="clicks" stroke="#4f46e5" strokeWidth={3} dot={{ r: 4 }} name="Clicks" />
-                  <Line type="monotone" dataKey="impressions" stroke="#0ea5e9" strokeWidth={2} strokeDasharray="5 5" name="Impressions" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            <p className="text-xs text-slate-400 mb-6 font-medium">Organic growth tracking over recorded scans</p>
+            {trafficData.length === 0 ? (
+              <div className="py-12 text-center text-slate-400 text-sm">
+                No analytics recorded yet. Add a website to begin tracking clicks & impressions.
+              </div>
+            ) : (
+              <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={trafficData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12 }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#0f172a",
+                        borderRadius: "12px",
+                        border: "none",
+                        color: "#fff",
+                        fontSize: "12px",
+                      }}
+                    />
+                    <Legend />
+                    <Line type="monotone" dataKey="clicks" stroke="#4f46e5" strokeWidth={3} dot={{ r: 4 }} name="Clicks" />
+                    <Line type="monotone" dataKey="impressions" stroke="#0ea5e9" strokeWidth={2} strokeDasharray="5 5" name="Impressions" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </Card>
         </>
       )}
@@ -236,51 +187,50 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto mt-4">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-slate-100 text-xs uppercase text-slate-400 font-semibold">
-                <th className="pb-3">Keyword</th>
-                <th className="pb-3">Rank Position</th>
-                <th className="pb-3">30-Day Change</th>
-                <th className="pb-3">Monthly Vol</th>
-                <th className="pb-3">Landing URL</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {rankings.map((rank) => (
-                <tr key={rank.id} className="hover:bg-slate-50/60 transition">
-                  <td className="py-4 font-semibold text-slate-800 text-sm">
-                    {rank.keyword}
-                  </td>
-                  <td className="py-4 font-extrabold text-indigo-600 text-base">
-                    #{rank.position}
-                  </td>
-                  <td className="py-4 font-bold text-sm">
-                    <span
-                      className={`inline-flex items-center gap-0.5 ${
-                        rank.isPositive ? "text-emerald-600" : "text-red-500"
-                      }`}
-                    >
-                      {rank.isPositive ? (
-                        <ArrowUpRight className="h-4 w-4" />
-                      ) : (
-                        <ArrowDownRight className="h-4 w-4" />
-                      )}
-                      {rank.change}
-                    </span>
-                  </td>
-                  <td className="py-4 font-bold text-slate-700 text-sm">
-                    {rank.volume}
-                  </td>
-                  <td className="py-4 font-mono text-xs text-slate-500">
-                    {rank.url}
-                  </td>
+        {keywords.length === 0 ? (
+          <div className="py-12 text-center text-slate-400">
+            <Search className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+            <p className="font-semibold text-slate-700">No tracked keywords.</p>
+            <p className="text-xs text-slate-400 mt-1">Run AI Keyword Research to start tracking positions.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto mt-4">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-slate-100 text-xs uppercase text-slate-400 font-semibold">
+                  <th className="pb-3">Keyword</th>
+                  <th className="pb-3">Difficulty</th>
+                  <th className="pb-3">CPC</th>
+                  <th className="pb-3">Search Intent</th>
+                  <th className="pb-3">Cluster</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {keywords.map((kw) => (
+                  <tr key={kw.id} className="hover:bg-slate-50/60 transition">
+                    <td className="py-4 font-semibold text-slate-800 text-sm">
+                      {kw.term}
+                    </td>
+                    <td className="py-4 font-bold text-indigo-600 text-sm">
+                      {kw.difficulty} / 100
+                    </td>
+                    <td className="py-4 font-medium text-slate-700 text-sm">
+                      {kw.cpc}
+                    </td>
+                    <td className="py-4 font-medium text-slate-700 text-sm">
+                      <span className="inline-block bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md text-xs font-semibold">
+                        {kw.intent}
+                      </span>
+                    </td>
+                    <td className="py-4 font-mono text-xs text-slate-500">
+                      {kw.cluster || "General"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
     </DashboardLayout>
   );

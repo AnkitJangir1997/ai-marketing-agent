@@ -24,7 +24,13 @@ export default function SeoAuditPage() {
     setIsScanning(true);
     toast.info("AI Web Crawler Agent running live HTTP scan on site...");
     try {
-      await runScan(website?.domain || "ajstudio.in");
+      const domainToScan = website?.domain;
+      if (!domainToScan) {
+        toast.error("Please add a website to run an SEO audit.");
+        setIsScanning(false);
+        return;
+      }
+      await runScan(domainToScan);
       toast.success("Live SEO Health Audit completed!");
     } catch (err) {
       toast.error(err.message || "Audit failed");
@@ -58,7 +64,7 @@ export default function SeoAuditPage() {
           <p className="mt-1.5 text-slate-500 text-sm">
             Live web crawler diagnostics for{" "}
             <span className="font-semibold text-slate-800">
-              {website?.domain || "ajstudio.in"}
+              {website?.domain ? website.domain : "No website selected"}
             </span>
           </p>
         </div>
