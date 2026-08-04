@@ -1,9 +1,5 @@
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import DashboardPage from "./dashboard/page";
 
 export default function Home() {
-  return (
-    <DashboardLayout>
-      <h1>AI Marketing Agent Dashboard</h1>
-    </DashboardLayout>
-  );
+  return <DashboardPage />;
 }

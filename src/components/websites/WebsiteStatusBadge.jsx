@@ -9,5 +9,9 @@ export default function WebsiteStatusBadge({ status }) {
     return <Badge color="yellow">Warning</Badge>;
   }
 
-  return <Badge color="red">Critical</Badge>;
+  if (status === "Pending") {
+    return <Badge color="blue">Pending</Badge>;
+  }
+
+  return <Badge color="red">{status || "Critical"}</Badge>;
 }

@@ -50,7 +50,7 @@ export default function Sidebar() {
         <nav className="p-4 space-y-1">
           {menu.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href === "/dashboard" && pathname === "/");
             return (
               <Link
                 key={item.name}
