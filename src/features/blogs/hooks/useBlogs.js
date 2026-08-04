@@ -58,8 +58,27 @@ export default function useBlogs() {
   };
 
   useEffect(() => {
-    fetchBlogs();
-  }, [fetchBlogs]);
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/blogs");
+        if (!res.ok) throw new Error("Failed to fetch blogs");
+        const data = await res.json();
+        if (isMounted) {
+          setBlogs(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     blogs,

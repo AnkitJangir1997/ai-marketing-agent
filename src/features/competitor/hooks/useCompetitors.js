@@ -39,8 +39,27 @@ export default function useCompetitors() {
   };
 
   useEffect(() => {
-    fetchCompetitors();
-  }, [fetchCompetitors]);
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/competitors");
+        if (!res.ok) throw new Error("Failed to fetch competitors");
+        const data = await res.json();
+        if (isMounted) {
+          setCompetitors(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     competitors,

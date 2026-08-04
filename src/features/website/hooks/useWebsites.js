@@ -24,8 +24,29 @@ export default function useWebsites() {
   }, []);
 
   useEffect(() => {
-    fetchWebsites();
-  }, [fetchWebsites]);
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/websites");
+        if (!res.ok) {
+          throw new Error("Failed to fetch websites");
+        }
+        const data = await res.json();
+        if (isMounted) {
+          setWebsites(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message || "Something went wrong");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     websites,

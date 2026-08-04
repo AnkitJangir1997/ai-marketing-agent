@@ -39,8 +39,27 @@ export default function useKeywords() {
   };
 
   useEffect(() => {
-    fetchKeywords();
-  }, [fetchKeywords]);
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/keywords");
+        if (!res.ok) throw new Error("Failed to fetch keywords");
+        const data = await res.json();
+        if (isMounted) {
+          setKeywords(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     keywords,

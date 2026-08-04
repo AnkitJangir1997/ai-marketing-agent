@@ -10,28 +10,30 @@ const ThemeContext = createContext({
 });
 
 export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState("dark");
+  const [theme, setThemeState] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "dark";
+    }
+    return "dark";
+  });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setThemeState(savedTheme);
-
-    if (savedTheme === "dark") {
+    if (theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, []);
+    const id = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(id);
+  }, [theme]);
 
   const setTheme = (newTheme) => {
     setThemeState(newTheme);
-    localStorage.setItem("theme", newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", newTheme);
     }
   };
 

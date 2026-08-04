@@ -62,8 +62,28 @@ export default function useSeoAudit() {
   };
 
   useEffect(() => {
-    fetchAudit();
-  }, [fetchAudit]);
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/seo-audit");
+        if (!res.ok) throw new Error("Failed to fetch audit data");
+        const data = await res.json();
+        if (isMounted) {
+          setAudit(data.audit);
+          setWebsite(data.website);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     audit,

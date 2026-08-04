@@ -10,11 +10,10 @@ function getGreeting() {
 }
 
 export default function WelcomeSection() {
-  const [greeting, setGreeting] = useState("Good Morning");
+  const [greeting] = useState(getGreeting);
   const [websiteCount, setWebsiteCount] = useState(null);
 
   useEffect(() => {
-    setGreeting(getGreeting());
     fetch("/api/websites")
       .then((r) => r.json())
       .then((data) => {

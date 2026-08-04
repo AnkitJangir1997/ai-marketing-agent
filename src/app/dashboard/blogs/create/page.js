@@ -230,7 +230,7 @@ function BlogCreateForm() {
                 <FileText className="h-14 w-14 mb-3 text-slate-300" />
                 <h3 className="text-lg font-bold text-slate-700">Article Preview Workspace</h3>
                 <p className="text-xs text-slate-400 max-w-sm mt-1">
-                  Configure your topic on the left and click "Generate AI Article" to watch the agents build your SEO post.
+                  Configure your topic on the left and click &quot;Generate AI Article&quot; to watch the agents build your SEO post.
                 </p>
               </div>
             ) : (
